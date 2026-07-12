@@ -1,0 +1,19 @@
+{
+    "medians": {
+        "Glucose": 117.0,
+        "BloodPressure": 72.0,
+        "SkinThickness": 29.0,
+        "Insulin": 125.0,
+        "BMI": 32.3
+    },
+    "quantiles": {
+        "Insulin": {
+            "q01": 24.34,
+            "q99": 519.9000000000012
+        },
+        "SkinThickness": {
+            "q01": 10.0,
+            "q99": 51.33000000000004
+        }
+    }
+}

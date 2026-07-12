@@ -1,0 +1,15 @@
+[
+    "Pregnancies",
+    "Glucose",
+    "BloodPressure",
+    "SkinThickness",
+    "Insulin",
+    "BMI",
+    "DiabetesPedigreeFunction",
+    "Age",
+    "BMI_Category",
+    "Age_Group",
+    "Glucose_Category",
+    "Glucose_BMI_Interaction",
+    "Insulin_Resistance_Proxy"
+]
