@@ -26,25 +26,24 @@ class DiseasePredictor:
         return pd.DataFrame([raw_data])
         
     def _preprocess(self, df):
-        # 1. Replace 0 with median
+    
         zero_cols = ['Glucose', 'BloodPressure', 'SkinThickness', 'Insulin', 'BMI']
         for col in zero_cols:
             if df[col].iloc[0] == 0:
                 df[col] = self.config['medians'][col]
                 
-        # 2. Cap Outliers
+        
         cap_cols = ['Insulin', 'SkinThickness']
         for col in cap_cols:
             q01 = self.config['quantiles'][col]['q01']
             q99 = self.config['quantiles'][col]['q99']
             df[col] = np.clip(df[col], a_min=q01, a_max=q99)
             
-        # 3. Engineer Features
-        # Log transform
+        
         for col in ['Insulin', 'DiabetesPedigreeFunction']:
             df[col] = np.log1p(df[col])
             
-        # Derived features
+    
         df['BMI_Category'] = np.select(
             [df['BMI'] < 18.5, (df['BMI'] >= 18.5) & (df['BMI'] < 25), (df['BMI'] >= 25) & (df['BMI'] < 30), df['BMI'] >= 30],
             [0, 1, 2, 3], default=1
@@ -60,10 +59,10 @@ class DiseasePredictor:
         df['Glucose_BMI_Interaction'] = df['Glucose'] * df['BMI']
         df['Insulin_Resistance_Proxy'] = df['Glucose'] / (df['Insulin'] + 1)
         
-        # 4. Reorder to match training exactly
+        
         df = df[self.feature_names]
         
-        # 5. Scale
+        
         df_scaled = pd.DataFrame(self.scaler.transform(df), columns=self.feature_names)
         return df_scaled
         
@@ -90,7 +89,7 @@ class DiseasePredictor:
         }
 
 if __name__ == "__main__":
-    # Test prediction
+    
     sample = {
         'Pregnancies': 2,
         'Glucose': 130,

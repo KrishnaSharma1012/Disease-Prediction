@@ -2,6 +2,7 @@ import os
 import shap
 import joblib
 import pandas as pd
+import numpy as np
 import matplotlib.pyplot as plt
 from src.utils.logger import get_logger
 
@@ -65,5 +66,4 @@ def generate_shap_plots(model_path="models/v1/model_final_v1.pkl", data_dir="dat
         logger.error(f"Could not generate SHAP plots for this model type: {e}")
 
 if __name__ == "__main__":
-    import numpy as np # imported locally for safety
     generate_shap_plots()
