@@ -1,0 +1,130 @@
+export const mockPredictionResult = {
+  prediction: 'Diabetes',
+  confidence_score: 0.87,
+  risk_level: 'HIGH',
+  threshold_used: 0.35,
+  disease_info: {
+    name: 'Type 2 Diabetes Mellitus',
+    description: 'Type 2 diabetes is a chronic condition that affects the way your body metabolizes sugar (glucose). With type 2 diabetes, your body either resists the effects of insulin — a hormone that regulates the movement of sugar into your cells — or doesn\'t produce enough insulin to maintain normal glucose levels.',
+    symptoms: [
+      'Increased thirst and frequent urination',
+      'Increased hunger',
+      'Unexplained weight loss',
+      'Fatigue and weakness',
+      'Blurred vision',
+      'Slow-healing sores',
+      'Frequent infections',
+      'Numbness or tingling in hands or feet',
+    ],
+    causes: [
+      'Insulin resistance in muscle, fat, and liver cells',
+      'Genetic predisposition and family history',
+      'Obesity and physical inactivity',
+      'Age (risk increases after 45)',
+      'Polycystic ovary syndrome (in women)',
+      'High blood pressure and abnormal cholesterol levels',
+    ],
+    prevention: [
+      'Maintain a healthy weight — even modest weight loss can help',
+      'Exercise regularly — aim for 150 minutes of moderate activity per week',
+      'Eat a balanced diet rich in whole grains, fruits, and vegetables',
+      'Limit refined carbohydrates and sugary drinks',
+      'Monitor blood sugar levels regularly if at risk',
+      'Get regular health check-ups and screenings',
+    ],
+    lifestyle: [
+      'Walk at least 30 minutes every day',
+      'Take stairs instead of elevators',
+      'Practice stress management techniques (yoga, meditation)',
+      'Get 7-9 hours of quality sleep per night',
+      'Stay hydrated — drink 8 glasses of water daily',
+      'Quit smoking and limit alcohol consumption',
+    ],
+    diet: [
+      'Choose whole grains over refined grains',
+      'Include lean protein (fish, chicken, legumes) in every meal',
+      'Eat plenty of non-starchy vegetables (broccoli, spinach, peppers)',
+      'Limit sugar-sweetened beverages — choose water or herbal tea',
+      'Use healthy fats (olive oil, nuts, avocado) in moderation',
+      'Control portion sizes and eat at regular intervals',
+    ],
+  },
+};
+
+export const mockHealthyResult = {
+  prediction: 'Healthy',
+  confidence_score: 0.22,
+  risk_level: 'LOW',
+  threshold_used: 0.35,
+  disease_info: {
+    name: 'No Diabetes Detected',
+    description: 'Based on the provided health metrics, the AI model indicates a low probability of diabetes. Your glucose levels, BMI, and other indicators fall within healthy ranges. However, this is not a medical diagnosis — always consult a healthcare professional for definitive assessments.',
+    symptoms: [],
+    causes: [],
+    prevention: [
+      'Continue maintaining a healthy lifestyle',
+      'Get annual health check-ups',
+      'Monitor blood sugar if you have a family history of diabetes',
+      'Stay physically active and maintain a balanced diet',
+    ],
+    lifestyle: [
+      'Keep up your current healthy habits',
+      'Aim for at least 150 minutes of exercise per week',
+      'Practice mindfulness and stress reduction',
+      'Maintain a consistent sleep schedule',
+    ],
+    diet: [
+      'Continue eating a balanced, nutrient-rich diet',
+      'Stay hydrated throughout the day',
+      'Include a variety of fruits and vegetables',
+      'Limit processed foods and excessive sodium',
+    ],
+  },
+};
+
+export const mockHistory = [
+  { id: 1, date: '2026-07-13T10:30:00', prediction: 'Diabetes',  risk_level: 'HIGH',   confidence_score: 0.87 },
+  { id: 2, date: '2026-07-12T14:15:00', prediction: 'Healthy',   risk_level: 'LOW',    confidence_score: 0.18 },
+  { id: 3, date: '2026-07-11T09:45:00', prediction: 'Diabetes',  risk_level: 'MEDIUM', confidence_score: 0.52 },
+  { id: 4, date: '2026-07-10T16:20:00', prediction: 'Healthy',   risk_level: 'LOW',    confidence_score: 0.12 },
+  { id: 5, date: '2026-07-09T11:00:00', prediction: 'Diabetes',  risk_level: 'HIGH',   confidence_score: 0.91 },
+  { id: 6, date: '2026-07-08T08:30:00', prediction: 'Healthy',   risk_level: 'LOW',    confidence_score: 0.25 },
+  { id: 7, date: '2026-07-07T13:10:00', prediction: 'Diabetes',  risk_level: 'MEDIUM', confidence_score: 0.58 },
+  { id: 8, date: '2026-07-06T17:45:00', prediction: 'Healthy',   risk_level: 'LOW',    confidence_score: 0.09 },
+];
+
+export const mockModelInfo = {
+  dataset: {
+    name: 'Pima Indians Diabetes Dataset',
+    source: 'UCI Machine Learning Repository / Kaggle',
+    rows: 768,
+    features: 8,
+    target: 'Outcome (0 = No Diabetes, 1 = Diabetes)',
+    description: 'The dataset consists of diagnostic measurements from 768 female patients of Pima Indian heritage, aged 21+. Features include glucose level, blood pressure, BMI, insulin level, and more.',
+  },
+  algorithms: [
+    { name: 'Logistic Regression', type: 'Linear', status: 'Baseline' },
+    { name: 'Decision Tree',       type: 'Tree',   status: 'Tested' },
+    { name: 'Random Forest',       type: 'Ensemble', status: 'Runner-up' },
+    { name: 'Naive Bayes',         type: 'Probabilistic', status: 'Tested' },
+    { name: 'SVM (RBF)',           type: 'Kernel', status: 'Tested' },
+    { name: 'XGBoost',             type: 'Gradient Boosting', status: 'Selected ✓' },
+  ],
+  metrics: {
+    accuracy:  0.604,
+    precision: 0.468,
+    recall:    0.963,
+    f1:        0.630,
+    roc_auc:   0.833,
+  },
+  features: [
+    { name: 'Glucose',  importance: 0.28 },
+    { name: 'BMI',      importance: 0.21 },
+    { name: 'Age',      importance: 0.15 },
+    { name: 'DiabetesPedigreeFunction', importance: 0.12 },
+    { name: 'Insulin',  importance: 0.09 },
+    { name: 'BloodPressure', importance: 0.07 },
+    { name: 'Pregnancies', importance: 0.05 },
+    { name: 'SkinThickness', importance: 0.03 },
+  ],
+};

@@ -27,3 +27,8 @@ Thumbs.db
 
 # Large binary model files (reproducible via training scripts)
 *.pkl
+
+# Frontend
+frontend/node_modules/
+frontend/dist/
+frontend/.env
