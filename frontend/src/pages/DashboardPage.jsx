@@ -2,13 +2,12 @@ import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import {
   BarChart3, Clock, TrendingUp, Activity, ShieldCheck,
-  ShieldAlert, AlertTriangle, Calendar, ArrowRight
+  ShieldAlert, AlertTriangle, Calendar, ArrowRight, Sparkles
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import {
   PieChart, Pie, Cell, ResponsiveContainer,
   AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip,
-  BarChart, Bar
 } from 'recharts';
 import Card from '../components/Card';
 import Button from '../components/Button';
@@ -22,6 +21,47 @@ const fadeUp = {
 const stagger = { visible: { transition: { staggerChildren: 0.1 } } };
 
 const PIE_COLORS = ['#10b981', '#f59e0b', '#ef4444'];
+
+/* ─── STAT CARD ────────────────────────────────── */
+function StatCard({ icon: Icon, label, value, color, delay = 0 }) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay, type: 'spring', stiffness: 200 }}
+      whileHover={{ y: -6, transition: { type: 'spring', stiffness: 300 } }}
+    >
+      <Card hover={false} className="relative overflow-hidden group">
+        {/* Gradient corner accent */}
+        <div className={cn('absolute top-0 right-0 h-24 w-24 rounded-bl-[2rem] bg-gradient-to-br opacity-[0.07] transition-opacity group-hover:opacity-[0.12]', color)} />
+
+        <div className={cn('inline-flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br shadow-md mb-3', color)}>
+          <Icon className="h-5 w-5 text-white" />
+        </div>
+        <motion.p
+          className="text-2xl font-extrabold text-surface-900 dark:text-white tabular-nums"
+          initial={{ opacity: 0, scale: 0.5 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ delay: delay + 0.2, type: 'spring' }}
+        >
+          {value}
+        </motion.p>
+        <p className="text-xs text-surface-500 dark:text-surface-400 mt-1">{label}</p>
+      </Card>
+    </motion.div>
+  );
+}
+
+/* ─── CUSTOM TOOLTIP ────────────────────────────── */
+function CustomTooltip({ active, payload, label }) {
+  if (!active || !payload?.length) return null;
+  return (
+    <div className="rounded-xl border border-surface-200/60 bg-white/90 px-4 py-3 shadow-lg backdrop-blur-xl dark:border-surface-700/40 dark:bg-surface-800/90">
+      <p className="text-xs text-surface-400 mb-1">{label}</p>
+      <p className="text-sm font-bold text-surface-900 dark:text-white">{payload[0].value}%</p>
+    </div>
+  );
+}
 
 export default function DashboardPage() {
   const [history, setHistory] = useState([]);
@@ -49,25 +89,18 @@ export default function DashboardPage() {
     score: +(h.confidence_score * 100).toFixed(0),
   })).reverse();
 
-  const statCards = [
-    { icon: BarChart3,  label: 'Total Predictions', value: total,               color: 'from-brand-500 to-brand-700' },
-    { icon: TrendingUp, label: 'Avg Confidence',     value: formatPercent(avgConf), color: 'from-violet-500 to-violet-700' },
-    { icon: ShieldAlert,label: 'High Risk Cases',    value: highRisk,            color: 'from-red-500 to-red-700' },
-    { icon: ShieldCheck,label: 'Low Risk Cases',     value: lowRisk,             color: 'from-emerald-500 to-emerald-700' },
-  ];
-
   if (loading) {
     return (
-      <div className="gradient-bg min-h-screen py-12">
+      <div className="gradient-bg gradient-mesh min-h-screen py-12">
         <div className="section-padding max-w-6xl mx-auto">
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
             {[1,2,3,4].map(i => (
-              <div key={i} className="h-32 rounded-2xl bg-surface-100 dark:bg-surface-800 animate-pulse" />
+              <div key={i} className="h-32 rounded-2xl bg-surface-100/60 dark:bg-surface-800/40 backdrop-blur-sm animate-pulse" />
             ))}
           </div>
           <div className="grid lg:grid-cols-2 gap-6">
-            <div className="h-72 rounded-2xl bg-surface-100 dark:bg-surface-800 animate-pulse" />
-            <div className="h-72 rounded-2xl bg-surface-100 dark:bg-surface-800 animate-pulse" />
+            <div className="h-72 rounded-2xl bg-surface-100/60 dark:bg-surface-800/40 backdrop-blur-sm animate-pulse" />
+            <div className="h-72 rounded-2xl bg-surface-100/60 dark:bg-surface-800/40 backdrop-blur-sm animate-pulse" />
           </div>
         </div>
       </div>
@@ -75,34 +108,38 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="gradient-bg min-h-screen py-12">
+    <div className="gradient-bg gradient-mesh min-h-screen py-12">
       <div className="section-padding max-w-6xl mx-auto">
         <motion.div initial="hidden" animate="visible" variants={stagger}>
           {/* Header */}
           <motion.div variants={fadeUp} className="mb-8">
-            <h1 className="text-3xl font-extrabold text-surface-900 dark:text-white">Dashboard</h1>
-            <p className="mt-1 text-surface-500 dark:text-surface-400">Your prediction history and analytics at a glance</p>
+            <div className="flex items-center gap-3 mb-2">
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-brand-500 to-teal-500 shadow-glow">
+                <BarChart3 className="h-5 w-5 text-white" />
+              </div>
+              <div>
+                <h1 className="text-3xl font-extrabold text-surface-900 dark:text-white">Dashboard</h1>
+                <p className="text-surface-500 dark:text-surface-400 text-sm">Your prediction history and analytics at a glance</p>
+              </div>
+            </div>
           </motion.div>
 
           {/* Stat cards */}
-          <motion.div variants={fadeUp} className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-            {statCards.map(s => (
-              <Card key={s.label} hover={false} className="relative overflow-hidden">
-                <div className={cn('absolute top-0 right-0 h-20 w-20 rounded-bl-3xl bg-gradient-to-br opacity-10', s.color)} />
-                <div className={cn('inline-flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br shadow-md mb-3', s.color)}>
-                  <s.icon className="h-5 w-5 text-white" />
-                </div>
-                <p className="text-2xl font-extrabold text-surface-900 dark:text-white">{s.value}</p>
-                <p className="text-xs text-surface-500 dark:text-surface-400 mt-1">{s.label}</p>
-              </Card>
-            ))}
-          </motion.div>
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+            <StatCard icon={BarChart3}   label="Total Predictions" value={total}               color="from-brand-500 to-brand-700" delay={0} />
+            <StatCard icon={TrendingUp}  label="Avg Confidence"    value={formatPercent(avgConf)} color="from-violet-500 to-violet-700" delay={0.05} />
+            <StatCard icon={ShieldAlert} label="High Risk Cases"   value={highRisk}            color="from-red-500 to-red-700" delay={0.1} />
+            <StatCard icon={ShieldCheck} label="Low Risk Cases"    value={lowRisk}             color="from-emerald-500 to-emerald-700" delay={0.15} />
+          </div>
 
           {/* Charts row */}
           <motion.div variants={fadeUp} className="grid lg:grid-cols-2 gap-6 mb-8">
             {/* Risk Distribution Pie */}
             <Card hover={false}>
-              <h3 className="text-base font-bold text-surface-900 dark:text-white mb-4">Risk Distribution</h3>
+              <div className="flex items-center gap-2 mb-4">
+                <Sparkles className="h-4 w-4 text-brand-500" />
+                <h3 className="text-base font-bold text-surface-900 dark:text-white">Risk Distribution</h3>
+              </div>
               <ResponsiveContainer width="100%" height={220}>
                 <PieChart>
                   <Pie data={riskDistribution} cx="50%" cy="50%" innerRadius={55} outerRadius={85}
@@ -111,7 +148,7 @@ export default function DashboardPage() {
                       <Cell key={i} fill={PIE_COLORS[i]} />
                     ))}
                   </Pie>
-                  <Tooltip contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 20px rgba(0,0,0,0.1)', fontSize: '13px' }} />
+                  <Tooltip content={<CustomTooltip />} />
                 </PieChart>
               </ResponsiveContainer>
               <div className="flex justify-center gap-6 mt-2">
@@ -126,20 +163,23 @@ export default function DashboardPage() {
 
             {/* Confidence Timeline */}
             <Card hover={false}>
-              <h3 className="text-base font-bold text-surface-900 dark:text-white mb-4">Confidence Timeline</h3>
+              <div className="flex items-center gap-2 mb-4">
+                <Activity className="h-4 w-4 text-brand-500" />
+                <h3 className="text-base font-bold text-surface-900 dark:text-white">Confidence Timeline</h3>
+              </div>
               <ResponsiveContainer width="100%" height={220}>
                 <AreaChart data={timelineData}>
                   <defs>
                     <linearGradient id="confGrad" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0%" stopColor="#3b8bff" stopOpacity={0.3} />
+                      <stop offset="0%" stopColor="#3b8bff" stopOpacity={0.25} />
                       <stop offset="100%" stopColor="#3b8bff" stopOpacity={0} />
                     </linearGradient>
                   </defs>
-                  <CartesianGrid strokeDasharray="3 3" stroke="rgba(148,163,184,0.15)" />
+                  <CartesianGrid strokeDasharray="3 3" stroke="rgba(148,163,184,0.1)" />
                   <XAxis dataKey="date" tick={{ fontSize: 11 }} stroke="#94a3b8" />
                   <YAxis tick={{ fontSize: 11 }} stroke="#94a3b8" domain={[0, 100]} unit="%" />
-                  <Tooltip contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 20px rgba(0,0,0,0.1)', fontSize: '13px' }} />
-                  <Area type="monotone" dataKey="score" stroke="#3b8bff" strokeWidth={2} fill="url(#confGrad)" />
+                  <Tooltip content={<CustomTooltip />} />
+                  <Area type="monotone" dataKey="score" stroke="#3b8bff" strokeWidth={2.5} fill="url(#confGrad)" />
                 </AreaChart>
               </ResponsiveContainer>
             </Card>
@@ -159,7 +199,7 @@ export default function DashboardPage() {
               <div className="overflow-x-auto">
                 <table className="w-full text-sm">
                   <thead>
-                    <tr className="border-b border-surface-100 dark:border-surface-700">
+                    <tr className="border-b border-surface-100 dark:border-surface-700/50">
                       <th className="pb-3 text-left font-semibold text-surface-500 dark:text-surface-400 text-xs uppercase tracking-wider">Date</th>
                       <th className="pb-3 text-left font-semibold text-surface-500 dark:text-surface-400 text-xs uppercase tracking-wider">Prediction</th>
                       <th className="pb-3 text-left font-semibold text-surface-500 dark:text-surface-400 text-xs uppercase tracking-wider">Risk</th>
@@ -167,10 +207,16 @@ export default function DashboardPage() {
                     </tr>
                   </thead>
                   <tbody>
-                    {history.map(h => {
+                    {history.map((h, idx) => {
                       const rc = getRiskColor(h.risk_level);
                       return (
-                        <tr key={h.id} className="border-b border-surface-50 dark:border-surface-800 last:border-0">
+                        <motion.tr
+                          key={h.id}
+                          initial={{ opacity: 0, x: -10 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          transition={{ delay: idx * 0.03 }}
+                          className="border-b border-surface-50 dark:border-surface-800/50 last:border-0 hover:bg-surface-50/50 dark:hover:bg-surface-800/30 transition-colors"
+                        >
                           <td className="py-3.5 flex items-center gap-2 text-surface-600 dark:text-surface-300">
                             <Calendar className="h-3.5 w-3.5 text-surface-400" />
                             {formatDate(h.date)}
@@ -181,15 +227,22 @@ export default function DashboardPage() {
                               {getRiskLabel(h.risk_level)}
                             </span>
                           </td>
-                          <td className="py-3.5 text-right font-semibold text-surface-700 dark:text-surface-300">
+                          <td className="py-3.5 text-right font-semibold text-surface-700 dark:text-surface-300 tabular-nums">
                             {formatPercent(h.confidence_score)}
                           </td>
-                        </tr>
+                        </motion.tr>
                       );
                     })}
                   </tbody>
                 </table>
               </div>
+              {history.length === 0 && (
+                <div className="text-center py-12">
+                  <Activity className="mx-auto h-10 w-10 text-surface-300 dark:text-surface-600 mb-3" />
+                  <p className="text-sm text-surface-400">No predictions yet. Run your first prediction!</p>
+                  <Link to="/predict"><Button size="sm" className="mt-4">Start Prediction</Button></Link>
+                </div>
+              )}
             </Card>
           </motion.div>
         </motion.div>

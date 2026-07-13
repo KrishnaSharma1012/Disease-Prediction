@@ -8,7 +8,9 @@ import {
 import Button from '../components/Button';
 import Card from '../components/Card';
 import AnimatedCounter from '../components/AnimatedCounter';
-import { useState } from 'react';
+import { useState, lazy, Suspense } from 'react';
+
+const HeroScene = lazy(() => import('../components/three/HeroScene'));
 
 const fadeUp = {
   hidden:  { opacity: 0, y: 30 },
@@ -19,7 +21,12 @@ const stagger = { visible: { transition: { staggerChildren: 0.12 } } };
 /* ─── HERO ──────────────────────────────────────── */
 function Hero() {
   return (
-    <section className="relative overflow-hidden gradient-bg min-h-[90vh] flex items-center">
+    <section className="relative overflow-hidden gradient-bg gradient-mesh min-h-[90vh] flex items-center">
+      {/* 3D Background Scene */}
+      <Suspense fallback={null}>
+        <HeroScene />
+      </Suspense>
+
       {/* Floating orbs */}
       <div className="pointer-events-none absolute inset-0">
         <div className="absolute -top-32 -left-32 h-96 w-96 rounded-full bg-brand-400/10 blur-3xl animate-float" />
@@ -71,7 +78,7 @@ function Hero() {
             transition={{ duration: 0.8, delay: 0.3 }}
             className="relative hidden lg:block"
           >
-            <div className="relative rounded-3xl border border-surface-200/60 bg-white/80 p-8 shadow-2xl backdrop-blur-xl dark:border-surface-700/40 dark:bg-surface-800/80">
+            <div className="relative rounded-3xl border border-white/20 bg-white/60 p-8 shadow-glass backdrop-blur-2xl dark:border-surface-700/30 dark:bg-surface-800/50">
               <div className="flex items-center gap-3 mb-6">
                 <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-brand-500 to-teal-500 flex items-center justify-center">
                   <Activity className="h-5 w-5 text-white" />
@@ -135,7 +142,7 @@ function Stats() {
       >
         {stats.map((s) => (
           <motion.div key={s.label} variants={fadeUp}
-            className="rounded-2xl border border-surface-200 bg-white p-5 text-center shadow-card dark:border-surface-700/60 dark:bg-surface-800/80"
+            className="rounded-2xl border border-white/20 bg-white/60 p-5 text-center shadow-glass backdrop-blur-xl dark:border-surface-700/30 dark:bg-surface-800/50"
           >
             <s.icon className="mx-auto mb-2 h-6 w-6 text-brand-500" />
             <p className="text-2xl font-extrabold text-surface-900 dark:text-white">
@@ -326,7 +333,7 @@ function CTA() {
         initial={{ opacity: 0, y: 30 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
-        className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-brand-600 via-brand-500 to-teal-500 p-12 text-center shadow-glow-lg"
+        className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-brand-600 via-brand-500 to-teal-500 p-12 text-center shadow-glow-lg animate-glow-pulse"
       >
         <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_30%_50%,rgba(255,255,255,0.12),transparent)]" />
         <h2 className="relative text-3xl sm:text-4xl font-extrabold text-white mb-4">

@@ -18,7 +18,7 @@ export default function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 border-b border-surface-200/60 bg-white/70 backdrop-blur-xl dark:border-surface-800/60 dark:bg-surface-950/70">
+    <nav className="fixed top-0 left-0 right-0 z-50 border-b border-white/[0.08] bg-white/60 backdrop-blur-2xl backdrop-saturate-[1.8] dark:border-surface-800/40 dark:bg-surface-950/60">
       <div className="section-padding flex h-16 items-center justify-between">
         {/* Logo */}
         <Link to="/" className="flex items-center gap-2.5 group" aria-label="MediPredict AI Home">

@@ -10,6 +10,7 @@ import {
 import Button from '../components/Button';
 import { predictDisease } from '../api/predictionService';
 import { useState } from 'react';
+import PredictionLoader from '../components/PredictionLoader';
 
 const schema = z.object({
   Pregnancies:              z.coerce.number().min(0, 'Min 0').max(20, 'Max 20'),
@@ -65,10 +66,15 @@ const FIELD_GROUPS = [
 
 function FieldInput({ field, register, error }) {
   const [showTip, setShowTip] = useState(false);
+  const [isFocused, setIsFocused] = useState(false);
   return (
-    <div className="relative">
+    <motion.div
+      className="relative"
+      whileHover={{ scale: 1.01 }}
+      transition={{ type: 'spring', stiffness: 400, damping: 25 }}
+    >
       <label htmlFor={field.name} className="flex items-center gap-2 text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
-        <field.icon className="h-4 w-4 text-brand-500" />
+        <field.icon className={`h-4 w-4 transition-colors duration-300 ${isFocused ? 'text-brand-400' : 'text-brand-500/60'}`} />
         {field.label}
         <button
           type="button"
@@ -88,23 +94,31 @@ function FieldInput({ field, register, error }) {
           )}
         </button>
       </label>
-      <input
-        id={field.name}
-        type="number"
-        step={field.step || 'any'}
-        placeholder={field.placeholder}
-        {...register(field.name)}
-        className={`w-full rounded-xl border px-4 py-3 text-sm bg-white transition-all duration-200 placeholder:text-surface-300 focus:outline-none focus:ring-2 focus:ring-brand-500/30 focus:border-brand-500 dark:bg-surface-800 dark:text-white dark:placeholder:text-surface-600 ${
-          error ? 'border-red-400 ring-2 ring-red-400/20' : 'border-surface-200 dark:border-surface-700'
-        }`}
-        aria-invalid={!!error}
-      />
+      <div className={`relative rounded-xl transition-shadow duration-300 ${isFocused ? 'shadow-[0_0_0_3px_rgba(59,139,255,0.15)]' : ''}`}>
+        <input
+          id={field.name}
+          type="number"
+          step={field.step || 'any'}
+          placeholder={field.placeholder}
+          {...register(field.name)}
+          onFocus={() => setIsFocused(true)}
+          onBlur={() => setIsFocused(false)}
+          className={`w-full rounded-xl border px-4 py-3 text-sm bg-white/80 backdrop-blur-sm transition-all duration-300 placeholder:text-surface-300 focus:outline-none focus:border-brand-500 dark:bg-surface-800/80 dark:text-white dark:placeholder:text-surface-600 ${
+            error ? 'border-red-400 ring-2 ring-red-400/20' : 'border-surface-200 dark:border-surface-700'
+          }`}
+          aria-invalid={!!error}
+        />
+      </div>
       {error && (
-        <p className="mt-1.5 flex items-center gap-1 text-xs text-red-500">
+        <motion.p
+          initial={{ opacity: 0, y: -4 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="mt-1.5 flex items-center gap-1 text-xs text-red-500"
+        >
           <AlertCircle className="h-3 w-3" /> {error.message}
-        </p>
+        </motion.p>
       )}
-    </div>
+    </motion.div>
   );
 }
 
@@ -134,6 +148,9 @@ export default function PredictPage() {
 
   return (
     <div className="gradient-bg min-h-screen py-12">
+      {/* Full-screen premium loading overlay */}
+      {submitting && <PredictionLoader />}
+
       <div className="section-padding">
         <motion.div initial="hidden" animate="visible" variants={stagger} className="max-w-3xl mx-auto">
           {/* Header */}
@@ -149,7 +166,7 @@ export default function PredictPage() {
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
             {FIELD_GROUPS.map((group) => (
               <motion.div key={group.title} variants={fadeUp}
-                className="rounded-2xl border border-surface-200 bg-white p-6 shadow-card dark:border-surface-700/60 dark:bg-surface-800/80"
+                className="rounded-2xl border border-surface-200/60 bg-white/70 p-6 shadow-card backdrop-blur-xl dark:border-surface-700/40 dark:bg-surface-800/60"
               >
                 <div className="flex items-center gap-2.5 mb-5">
                   <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-brand-50 dark:bg-brand-950/40">

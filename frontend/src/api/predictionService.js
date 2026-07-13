@@ -1,7 +1,7 @@
 import api from './client';
 import { mockPredictionResult, mockHealthyResult, mockHistory, mockModelInfo } from './mockData';
 
-const USE_MOCK = true; // flip to false when backend is available
+const USE_MOCK = false; // flip to false when backend is available
 
 export async function predictDisease(formData) {
   if (USE_MOCK) {

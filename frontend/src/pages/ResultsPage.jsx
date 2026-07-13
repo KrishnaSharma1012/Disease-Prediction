@@ -4,7 +4,7 @@ import {
   ShieldCheck, ShieldAlert, AlertTriangle, ArrowRight, RotateCcw,
   Heart, Stethoscope, Apple, Dumbbell, FileText, AlertCircle,
   CheckCircle2, TrendingUp, Printer, ChevronRight, Pill, Leaf,
-  Activity
+  Activity, Sparkles
 } from 'lucide-react';
 import Button from '../components/Button';
 import Card from '../components/Card';
@@ -16,29 +16,64 @@ const fadeUp = {
 };
 const stagger = { visible: { transition: { staggerChildren: 0.1 } } };
 
-/* ─── CONFIDENCE RING ──────────────────────────── */
-function ConfidenceRing({ score, risk }) {
+/* ─── ANIMATED CONFIDENCE GAUGE ───────────────── */
+function ConfidenceGauge({ score, risk }) {
   const pct = score * 100;
   const circumference = 2 * Math.PI * 54;
   const offset = circumference - (score * circumference);
-  const strokeColor = risk === 'HIGH' ? '#ef4444' : risk === 'MEDIUM' ? '#f59e0b' : '#10b981';
+
+  const colors = {
+    HIGH: { stroke: '#ef4444', glow: 'rgba(239,68,68,0.3)', bg: 'from-red-500/10 to-red-500/5' },
+    MEDIUM: { stroke: '#f59e0b', glow: 'rgba(245,158,11,0.3)', bg: 'from-amber-500/10 to-amber-500/5' },
+    LOW: { stroke: '#10b981', glow: 'rgba(16,185,129,0.3)', bg: 'from-emerald-500/10 to-emerald-500/5' },
+  };
+  const c = colors[risk] || colors.LOW;
 
   return (
     <div className="relative flex items-center justify-center">
-      <svg width="140" height="140" viewBox="0 0 120 120" className="-rotate-90">
-        <circle cx="60" cy="60" r="54" fill="none" stroke="currentColor" strokeWidth="8"
-          className="text-surface-100 dark:text-surface-700" />
+      {/* Outer glow ring */}
+      <motion.div
+        className="absolute inset-0 rounded-full"
+        animate={{ boxShadow: [`0 0 20px ${c.glow}`, `0 0 40px ${c.glow}`, `0 0 20px ${c.glow}`] }}
+        transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
+        style={{ width: 160, height: 160 }}
+      />
+
+      <svg width="160" height="160" viewBox="0 0 120 120" className="-rotate-90">
+        {/* Track */}
+        <circle cx="60" cy="60" r="54" fill="none" strokeWidth="6"
+          className="stroke-surface-100 dark:stroke-surface-700/50" />
+        {/* Subtle inner track */}
+        <circle cx="60" cy="60" r="46" fill="none" strokeWidth="1"
+          className="stroke-surface-100/50 dark:stroke-surface-700/30" />
+        {/* Progress arc */}
         <motion.circle
-          cx="60" cy="60" r="54" fill="none" stroke={strokeColor} strokeWidth="8"
+          cx="60" cy="60" r="54" fill="none" stroke={c.stroke} strokeWidth="6"
           strokeLinecap="round" strokeDasharray={circumference}
           initial={{ strokeDashoffset: circumference }}
           animate={{ strokeDashoffset: offset }}
-          transition={{ duration: 1.5, ease: 'easeOut', delay: 0.3 }}
+          transition={{ duration: 1.8, ease: [0.16, 1, 0.3, 1], delay: 0.3 }}
+        />
+        {/* Animated dot at end of arc */}
+        <motion.circle
+          cx="60" cy="6" r="4" fill={c.stroke}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 1.8 }}
+          style={{ transformOrigin: '60px 60px', rotate: `${score * 360}deg` }}
         />
       </svg>
+
       <div className="absolute flex flex-col items-center">
-        <span className="text-3xl font-extrabold text-surface-900 dark:text-white">{pct.toFixed(0)}%</span>
-        <span className="text-xs text-surface-400 font-medium">Confidence</span>
+        <motion.span
+          className="text-4xl font-extrabold text-surface-900 dark:text-white tabular-nums"
+          initial={{ opacity: 0, scale: 0.5 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ delay: 0.5, type: 'spring', stiffness: 200 }}
+        >
+          {pct.toFixed(0)}%
+        </motion.span>
+        <span className="text-xs text-surface-400 font-medium mt-0.5">Confidence</span>
       </div>
     </div>
   );
@@ -49,14 +84,19 @@ function RiskBadge({ risk }) {
   const c = getRiskColor(risk);
   const Icon = risk === 'HIGH' ? ShieldAlert : risk === 'MEDIUM' ? AlertTriangle : ShieldCheck;
   return (
-    <div className={cn('inline-flex items-center gap-2 rounded-full border px-5 py-2.5', c.bg, c.text, c.border)}>
+    <motion.div
+      initial={{ opacity: 0, scale: 0.8 }}
+      animate={{ opacity: 1, scale: 1 }}
+      transition={{ delay: 0.2, type: 'spring' }}
+      className={cn('inline-flex items-center gap-2 rounded-full border px-5 py-2.5', c.bg, c.text, c.border)}
+    >
       <Icon className="h-5 w-5" />
       <span className="text-sm font-bold">{getRiskLabel(risk)}</span>
-    </div>
+    </motion.div>
   );
 }
 
-/* ─── INFO SECTION ─────────────────────────────── */
+/* ─── INFO SECTION WITH STAGGER ───────────────── */
 function InfoSection({ icon: Icon, title, items, color = 'brand' }) {
   if (!items || items.length === 0) return null;
   const colors = {
@@ -77,10 +117,16 @@ function InfoSection({ icon: Icon, title, items, color = 'brand' }) {
       </div>
       <ul className="space-y-2.5">
         {items.map((item, i) => (
-          <li key={i} className="flex items-start gap-2.5 text-sm text-surface-600 dark:text-surface-300 leading-relaxed">
+          <motion.li
+            key={i}
+            initial={{ opacity: 0, x: -10 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.3 + i * 0.05 }}
+            className="flex items-start gap-2.5 text-sm text-surface-600 dark:text-surface-300 leading-relaxed"
+          >
             <ChevronRight className="h-4 w-4 text-brand-400 mt-0.5 shrink-0" />
             {item}
-          </li>
+          </motion.li>
         ))}
       </ul>
     </Card>
@@ -95,12 +141,16 @@ export default function ResultsPage() {
   if (!result) {
     return (
       <div className="flex min-h-screen items-center justify-center gradient-bg">
-        <div className="text-center">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="text-center"
+        >
           <Activity className="mx-auto h-12 w-12 text-surface-300 mb-4" />
           <h2 className="text-xl font-bold text-surface-900 dark:text-white mb-2">No Results Found</h2>
           <p className="text-surface-500 dark:text-surface-400 mb-6">Please run a prediction first.</p>
           <Link to="/predict"><Button>Go to Prediction</Button></Link>
-        </div>
+        </motion.div>
       </div>
     );
   }
@@ -109,35 +159,64 @@ export default function ResultsPage() {
   const isHealthy = prediction === 'Healthy';
 
   return (
-    <div className="gradient-bg min-h-screen py-12">
+    <div className="gradient-bg gradient-mesh min-h-screen py-12">
       <div className="section-padding">
         <motion.div initial="hidden" animate="visible" variants={stagger} className="max-w-4xl mx-auto">
 
-          {/* ── Header Card ──────────────────────── */}
+          {/* ── Header Card (Holographic Glass) ───── */}
           <motion.div variants={fadeUp}
-            className="relative overflow-hidden rounded-3xl border border-surface-200 bg-white p-8 shadow-card dark:border-surface-700/60 dark:bg-surface-800/80 mb-8"
+            className="relative overflow-hidden rounded-3xl border border-white/20 bg-white/60 p-8 shadow-glass backdrop-blur-2xl dark:border-surface-700/30 dark:bg-surface-800/50 mb-8"
           >
-            <div className="absolute top-0 right-0 w-64 h-64 rounded-full bg-gradient-to-br from-brand-100/30 to-teal-100/30 blur-3xl -z-0 dark:from-brand-900/10 dark:to-teal-900/10" />
+            {/* Animated gradient mesh background */}
+            <div className="pointer-events-none absolute inset-0 -z-0">
+              <motion.div
+                animate={{ x: [0, 30, 0], y: [0, -20, 0] }}
+                transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut' }}
+                className={cn('absolute -top-20 -right-20 h-64 w-64 rounded-full blur-3xl',
+                  isHealthy ? 'bg-emerald-400/15' : 'bg-red-400/10'
+                )}
+              />
+              <motion.div
+                animate={{ x: [0, -20, 0], y: [0, 15, 0] }}
+                transition={{ duration: 10, repeat: Infinity, ease: 'easeInOut' }}
+                className="absolute -bottom-20 -left-20 h-48 w-48 rounded-full bg-brand-400/10 blur-3xl"
+              />
+            </div>
 
             <div className="relative flex flex-col sm:flex-row items-center gap-8">
-              <ConfidenceRing score={confidence_score} risk={risk_level} />
+              <ConfidenceGauge score={confidence_score} risk={risk_level} />
 
               <div className="flex-1 text-center sm:text-left">
                 <RiskBadge risk={risk_level} />
-                <h1 className="mt-4 text-2xl sm:text-3xl font-extrabold text-surface-900 dark:text-white">
+                <motion.h1
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.4 }}
+                  className="mt-4 text-2xl sm:text-3xl font-extrabold text-surface-900 dark:text-white"
+                >
                   {isHealthy ? 'No Diabetes Detected' : 'Diabetes Risk Detected'}
-                </h1>
-                <p className="mt-2 text-surface-500 dark:text-surface-400 leading-relaxed max-w-lg">
+                </motion.h1>
+                <motion.p
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.6 }}
+                  className="mt-2 text-surface-500 dark:text-surface-400 leading-relaxed max-w-lg"
+                >
                   {disease_info?.description?.substring(0, 200)}...
-                </p>
-                <div className="mt-4 flex flex-wrap gap-3 justify-center sm:justify-start">
-                  <span className="inline-flex items-center gap-1.5 rounded-lg bg-surface-100 px-3 py-1.5 text-xs font-medium text-surface-600 dark:bg-surface-700 dark:text-surface-300">
+                </motion.p>
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.8 }}
+                  className="mt-4 flex flex-wrap gap-3 justify-center sm:justify-start"
+                >
+                  <span className="inline-flex items-center gap-1.5 rounded-full bg-surface-100/80 backdrop-blur-sm px-3 py-1.5 text-xs font-medium text-surface-600 dark:bg-surface-700/50 dark:text-surface-300">
                     <TrendingUp className="h-3.5 w-3.5" /> Confidence: {formatPercent(confidence_score)}
                   </span>
-                  <span className="inline-flex items-center gap-1.5 rounded-lg bg-surface-100 px-3 py-1.5 text-xs font-medium text-surface-600 dark:bg-surface-700 dark:text-surface-300">
+                  <span className="inline-flex items-center gap-1.5 rounded-full bg-surface-100/80 backdrop-blur-sm px-3 py-1.5 text-xs font-medium text-surface-600 dark:bg-surface-700/50 dark:text-surface-300">
                     <Activity className="h-3.5 w-3.5" /> Threshold: {result.threshold_used}
                   </span>
-                </div>
+                </motion.div>
               </div>
             </div>
 
@@ -147,12 +226,12 @@ export default function ResultsPage() {
                 <span>Healthy (0%)</span>
                 <span>Diabetic (100%)</span>
               </div>
-              <div className="h-3 rounded-full bg-surface-100 dark:bg-surface-700 overflow-hidden">
+              <div className="h-3 rounded-full bg-surface-100/80 dark:bg-surface-700/50 overflow-hidden backdrop-blur-sm">
                 <motion.div
                   initial={{ width: 0 }}
                   animate={{ width: `${confidence_score * 100}%` }}
-                  transition={{ duration: 1.2, ease: 'easeOut', delay: 0.5 }}
-                  className={cn('h-full rounded-full', risk_level === 'HIGH' ? 'bg-red-500' : risk_level === 'MEDIUM' ? 'bg-amber-500' : 'bg-emerald-500')}
+                  transition={{ duration: 1.5, ease: [0.16, 1, 0.3, 1], delay: 0.5 }}
+                  className={cn('h-full rounded-full', risk_level === 'HIGH' ? 'bg-gradient-to-r from-red-400 to-red-500' : risk_level === 'MEDIUM' ? 'bg-gradient-to-r from-amber-400 to-amber-500' : 'bg-gradient-to-r from-emerald-400 to-emerald-500')}
                 />
               </div>
               <div className="flex justify-between mt-1">
@@ -166,7 +245,12 @@ export default function ResultsPage() {
           {disease_info && (
             <motion.div variants={fadeUp}>
               <Card hover={false} className="mb-8">
-                <h3 className="text-lg font-bold text-surface-900 dark:text-white mb-3">{disease_info.name}</h3>
+                <div className="flex items-center gap-3 mb-3">
+                  <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-brand-50 dark:bg-brand-950/30">
+                    <Sparkles className="h-4 w-4 text-brand-500" />
+                  </div>
+                  <h3 className="text-lg font-bold text-surface-900 dark:text-white">{disease_info.name}</h3>
+                </div>
                 <p className="text-sm text-surface-500 dark:text-surface-400 leading-relaxed">{disease_info.description}</p>
               </Card>
             </motion.div>
@@ -187,7 +271,7 @@ export default function ResultsPage() {
 
           {/* ── Disclaimer ──────────────────────── */}
           <motion.div variants={fadeUp} className="mb-8">
-            <div className="rounded-2xl border border-amber-200 bg-amber-50 px-6 py-5 dark:border-amber-800/40 dark:bg-amber-900/10">
+            <div className="rounded-2xl border border-amber-200/60 bg-amber-50/80 px-6 py-5 backdrop-blur-sm dark:border-amber-800/30 dark:bg-amber-900/10">
               <div className="flex items-start gap-3">
                 <AlertCircle className="h-5 w-5 text-amber-600 dark:text-amber-400 mt-0.5 shrink-0" />
                 <div>
