@@ -58,4 +58,4 @@ def predict(request: PredictionRequest):
         raise HTTPException(status_code=500, detail="Internal server error during prediction")
 
 if __name__ == "__main__":
-    uvicorn.run("ml_service.main:app", host="0.0.0.0", port=5000, reload=False)
+    uvicorn.run("api.main:app", host="0.0.0.0", port=5000, reload=False)
