@@ -106,7 +106,7 @@ router.post('/predict', validate(predictionSchema), async (req, res, next) => {
     } else {
         predictionResult.disease_info = {
             name: 'No Diabetes Detected',
-            description: 'Based on the provided health metrics, the AI model indicates a low probability of diabetes.',
+            description: 'Based on the provided health metrics, the analysis indicates a low probability of diabetes.',
             symptoms: [],
             causes: [],
             prevention: ['Continue maintaining a healthy lifestyle'],

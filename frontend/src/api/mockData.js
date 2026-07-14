@@ -58,7 +58,7 @@ export const mockHealthyResult = {
   threshold_used: 0.35,
   disease_info: {
     name: 'No Diabetes Detected',
-    description: 'Based on the provided health metrics, the AI model indicates a low probability of diabetes. Your glucose levels, BMI, and other indicators fall within healthy ranges. However, this is not a medical diagnosis — always consult a healthcare professional for definitive assessments.',
+    description: 'Based on the provided health metrics, the analysis indicates a low probability of diabetes. Your glucose levels, BMI, and other indicators fall within healthy ranges. However, this is not a medical diagnosis — always consult a healthcare professional for definitive assessments.',
     symptoms: [],
     causes: [],
     prevention: [
