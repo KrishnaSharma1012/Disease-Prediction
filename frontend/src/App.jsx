@@ -8,6 +8,8 @@ import ResultsPage from './pages/ResultsPage';
 import DashboardPage from './pages/DashboardPage';
 import AboutPage from './pages/AboutPage';
 
+import ReportsPage from './pages/ReportsPage';
+
 function PageTransition({ children }) {
   return (
     <motion.div
@@ -31,6 +33,7 @@ function AnimatedRoutes() {
           <Route path="predict" element={<PageTransition><PredictPage /></PageTransition>} />
           <Route path="predict/results" element={<PageTransition><ResultsPage /></PageTransition>} />
           <Route path="dashboard" element={<PageTransition><DashboardPage /></PageTransition>} />
+          <Route path="reports" element={<PageTransition><ReportsPage /></PageTransition>} />
           <Route path="about" element={<PageTransition><AboutPage /></PageTransition>} />
         </Route>
       </Routes>

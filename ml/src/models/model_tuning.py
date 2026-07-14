@@ -43,9 +43,8 @@ def tune_random_forest(X_train, y_train):
     logger.info(f"Random Forest Best Recall (Random Search): {random_search.best_score_:.4f}")
     logger.info(f"Random Forest Best Params: {random_search.best_params_}")
     
-    # We will skip Grid Search for simplicity in this script as Random Search usually gets 95% of the way there,
-    # but the blueprint specifies Random -> Grid. 
-    # Let's do a quick Grid Search around the best params.
+    # Random Search usually gets 95% of the way there.
+    # Let's do a quick Grid Search around the best params to fine-tune.
     best_rf_params = random_search.best_params_
     
     param_grid = {

@@ -30,3 +30,8 @@ export async function getModelInfo() {
   const { data } = await api.get('/model-info');
   return data;
 }
+
+export async function getReports() {
+  const { data } = await api.get('/reports');
+  return data;
+}

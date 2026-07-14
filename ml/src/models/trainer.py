@@ -58,8 +58,7 @@ def train_and_evaluate_models():
             # Create pipeline with SMOTE
             # We apply class_weight='balanced' where applicable instead of SMOTE for linear models,
             # but to be uniform and test SMOTE, we'll use it in the pipeline.
-            # XGBoost handles imbalance well with scale_pos_weight, so maybe we skip SMOTE for it?
-            # Blueprint M3.9 says "Apply SMOTE". We will apply it to all using pipeline.
+            # XGBoost handles imbalance well with scale_pos_weight, but we will still test SMOTE.
             
             pipeline = ImbPipeline([
                 ('smote', SMOTE(random_state=42)),

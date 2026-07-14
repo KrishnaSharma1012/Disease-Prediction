@@ -40,7 +40,7 @@ router.get('/health', async (req, res, next) => {
 // GET /api/model-info
 router.get('/model-info', (req, res) => {
   try {
-    const modelInfoPath = path.join(__dirname, '../../../models/v1/metrics_v1.json');
+    const modelInfoPath = path.join(__dirname, '../../../ml/models/v1/metrics_v1.json');
     let metrics: any = {};
     if (fs.existsSync(modelInfoPath)) {
         metrics = JSON.parse(fs.readFileSync(modelInfoPath, 'utf8'));
@@ -144,6 +144,38 @@ router.post('/history', async (req, res, next) => {
   try {
     const entry = await historyService.addHistory(req.body);
     res.status(201).json(entry);
+  } catch (error) {
+    next(error);
+  }
+});
+
+// GET /api/reports
+router.get('/reports', async (req, res, next) => {
+  try {
+    const reportsDir = path.join(__dirname, '../../../ml/reports');
+    if (!fs.existsSync(reportsDir)) {
+      return res.json([]);
+    }
+
+    const files = fs.readdirSync(reportsDir).filter(file => file.endsWith('.md'));
+    const reports = files.map(file => {
+      const content = fs.readFileSync(path.join(reportsDir, file), 'utf8');
+      
+      // Convert filename like 'data_cleaning_report.md' to 'Data Cleaning Report'
+      const title = file
+        .replace('.md', '')
+        .split('_')
+        .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+        .join(' ');
+
+      return {
+        id: file,
+        title,
+        content
+      };
+    });
+
+    res.json(reports);
   } catch (error) {
     next(error);
   }

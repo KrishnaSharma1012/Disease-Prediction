@@ -3,7 +3,8 @@ version: '3.8'
 services:
   ml_service:
     build:
-      context: ./ml_service
+      context: ./ml
+      dockerfile: Dockerfile
     container_name: disease_pred_ml
     ports:
       - "5000:5000"

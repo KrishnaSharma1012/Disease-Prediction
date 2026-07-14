@@ -7,16 +7,21 @@ import { errorHandler } from './utils/errorHandler';
 import apiRoutes from './routes/api.routes';
 import { initDb } from './services/history.service';
 
+import path from 'path';
+
 const app = express();
 
 // Security Middlewares
-app.use(helmet());
+app.use(helmet({ crossOriginResourcePolicy: false }));
 app.use(cors({ origin: env.FRONTEND_URL }));
 
 // Parsing & Logging
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(morgan('dev'));
+
+// Serve ML Reports Figures
+app.use('/api/reports/figures', express.static(path.join(__dirname, '../../../ml/reports/figures')));
 
 // Routes
 app.use('/api', apiRoutes);

@@ -77,7 +77,7 @@ class PimaDataCleaner:
         Ensures data values fall within biologically valid domains.
         """
         df = df.copy()
-        # Domain boundaries based on blueprint
+        # Domain boundaries for the features
         domain_rules = {
             'Pregnancies': (0, 20),
             'Glucose': (44, 300),
@@ -118,16 +118,16 @@ def run_cleaning_pipeline(input_path="data/raw/pima_diabetes_raw.csv", output_pa
     df = pd.read_csv(input_path)
     cleaner = PimaDataCleaner()
     
-    # M1.5 Remove duplicates
+    # Remove duplicates
     df = cleaner.remove_duplicates(df)
     
-    # M1.6 Replace zeros
+    # Replace zeros
     df = cleaner.replace_zeros_with_median(df, is_training=True)
     
-    # M1.8 Cap outliers
+    # Cap outliers
     df = cleaner.cap_outliers(df, columns=['Insulin', 'SkinThickness'], is_training=True)
     
-    # M1.7 Validate domains
+    # Validate domains
     df = cleaner.validate_domains(df)
     
     # Save output

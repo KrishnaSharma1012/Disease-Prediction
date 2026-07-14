@@ -9,6 +9,7 @@ const NAV_LINKS = [
   { to: '/',          label: 'Home' },
   { to: '/predict',   label: 'Predict' },
   { to: '/dashboard', label: 'Dashboard' },
+  { to: '/reports',   label: 'AI Reports' },
   { to: '/about',     label: 'About Model' },
 ];
 
