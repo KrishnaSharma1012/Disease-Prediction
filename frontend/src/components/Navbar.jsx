@@ -23,8 +23,8 @@ export default function Navbar() {
       <div className="section-padding flex h-16 items-center justify-between">
         {/* Logo */}
         <Link to="/" className="flex items-center gap-2.5 group" aria-label="MediPredict AI Home">
-          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-brand-500 to-teal-500 shadow-glow transition-transform group-hover:scale-110">
-            <Activity className="h-5 w-5 text-white" strokeWidth={2.5} />
+          <div className="flex h-10 w-10 overflow-hidden items-center justify-center rounded-xl shadow-glow transition-transform group-hover:scale-110">
+            <img src="/logo.png" alt="MediPredict Logo" className="h-full w-full object-cover" />
           </div>
           <span className="text-lg font-bold text-surface-900 dark:text-white">
             Medi<span className="gradient-text">Predict</span>
